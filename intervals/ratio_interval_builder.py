@@ -1,6 +1,7 @@
 from interval import Interval
 from time_series import Time_Series
 from base_table import Base_table
+import numpy as np
 
 class Ratio_interval_builder(object):
 
@@ -11,9 +12,20 @@ class Ratio_interval_builder(object):
     def calculate_intervals(self):
         relative_differences = self.__get_relative_differences()
         min_difference = self.__get_min_difference(relative_differences)
+        ratio = self.__ratio(relative_differences, min_difference)
+
+    def __ratio(self, relative_differences, min_difference):
         base = self.base_table.relative_difference_base(min_difference)
-        ratio = self.base_table.ratio(relative_differences)
-        # on step 5
+        sorted_differences = sorted(relative_differences)
+        median = np.median(sorted_differences)
+        return self.__get_smallest_base_large_than_median(min_difference, median, base)
+
+    def __get_smallest_base_large_than_median(self, min_difference, median, base):
+        plot = min_difference
+        while True:
+            if median > plot and median < plot + base:
+                return plot + base
+            plot = plot + base
 
     def __get_min_difference(self, differences):
         min_val = differences[0]
