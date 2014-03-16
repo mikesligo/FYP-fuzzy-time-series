@@ -1,7 +1,7 @@
 import sys
 from time_series import Time_Series
 from intervals.ratio_interval_builder import Ratio_interval_builder
-from fuzzy.fuzzy_set_builder import Fuzzy_set_builder
+from fuzzy.fuzzifier import Fuzzifier
 
 def main():
     if len(sys.argv) < 2:
@@ -15,9 +15,8 @@ def main():
     ratio_builder = Ratio_interval_builder(time_series)
     intervals = ratio_builder.calculate_intervals()
 
-    fuzzy_set_builder = Fuzzy_set_builder(intervals)
-    fuzzy_sets = fuzzy_set_builder.calculate_fuzzy_sets()
-    pass
+    fuzzifier = Fuzzifier(intervals)
+    fuzzifier.fuzzify_data()
 
 if __name__ == '__main__':
     main()

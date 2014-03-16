@@ -41,5 +41,4 @@ class Fuzzy_set_builder(object):
                     else:
                         current_set.add(Member(interval, 0.0))
             fuzzy_sets.append(current_set)
-
         return fuzzy_sets
