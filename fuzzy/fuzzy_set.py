@@ -2,9 +2,10 @@ from intervals.interval import Interval
 
 class Fuzzy_set(object):
 
-    def __init__(self):
+    def __init__(self, name):
         self.__set = []
         self.max = None
+        self.name = name
 
     def add(self, member):
         self.__set.append(member)
@@ -17,4 +18,4 @@ class Fuzzy_set(object):
         print "Max not set"
 
     def __str__(self):
-        return str(self.max_interval().lower_bound) + " - " + str(self.max_interval().upper_bound)
+        return self.name

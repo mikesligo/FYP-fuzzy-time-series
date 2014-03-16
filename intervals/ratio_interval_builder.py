@@ -57,9 +57,9 @@ class Ratio_interval_builder(object):
 
     def __get_relative_differences(self):
         relative_difference = []
-        for idx, value in enumerate(self.__time_series.values[1:]):
-            prev_value = self.__time_series.values[idx-1]
-
-            first_difference = abs(value - prev_value)
-            relative_difference.append(first_difference/prev_value)
+        for idx, value in enumerate(self.__time_series.values):
+            if idx > 0:
+                prev_value = self.__time_series.values[idx-1]
+                first_difference = abs(value - prev_value)
+                relative_difference.append(first_difference/prev_value)
         return relative_difference

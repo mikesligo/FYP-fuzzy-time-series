@@ -9,7 +9,7 @@ class Fuzzy_set_builder(object):
 
         fuzzy_sets = []
         for set_idx, set_counter in enumerate(intervals):
-            current_set = Fuzzy_set()
+            current_set = Fuzzy_set("u" + str(set_idx))
             if set_idx == 0:
                 for member_idx, interval in enumerate(intervals):
                     if member_idx == 0:
