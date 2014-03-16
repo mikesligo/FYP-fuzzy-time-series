@@ -1,21 +1,41 @@
 from interval import Interval
-from time_series import Time_Series
 from base_table import Base_table
+from math import log10, floor
 import numpy as np
 
 class Ratio_interval_builder(object):
 
     def __init__(self, time_series):
-        self.time_series = time_series
-        self.base_table = Base_table()
+        self.__time_series = time_series
+        self.__base_table = Base_table()
 
     def calculate_intervals(self):
         relative_differences = self.__get_relative_differences()
         min_difference = self.__get_min_difference(relative_differences)
         ratio = self.__ratio(relative_differences, min_difference)
+        return self.__intervals(ratio)
+
+    def __intervals(self, ratio):
+        intervals = []
+        increment_multiplier = 1.0 + ratio
+
+        lower_bound = self.__lower_bound()
+        upper_bound = lower_bound * increment_multiplier
+
+        while lower_bound < max(self.__time_series.values):
+            intervals.append(Interval(lower_bound, upper_bound))
+            lower_bound = upper_bound
+            upper_bound = upper_bound * increment_multiplier
+        return intervals
+
+    def __lower_bound(self):
+        min_val = min(self.__time_series.values)
+        log = floor(log10(min_val))
+        padding = (10**log)/10
+        return min_val - padding
 
     def __ratio(self, relative_differences, min_difference):
-        base = self.base_table.relative_difference_base(min_difference)
+        base = self.__base_table.relative_difference_base(min_difference)
         sorted_differences = sorted(relative_differences)
         median = np.median(sorted_differences)
         return self.__get_smallest_base_large_than_median(min_difference, median, base)
@@ -37,8 +57,8 @@ class Ratio_interval_builder(object):
 
     def __get_relative_differences(self):
         relative_difference = []
-        for idx, value in enumerate(self.time_series.values[1:]):
-            prev_value = self.time_series.values[idx-1]
+        for idx, value in enumerate(self.__time_series.values[1:]):
+            prev_value = self.__time_series.values[idx-1]
 
             first_difference = abs(value - prev_value)
             relative_difference.append(first_difference/prev_value)
