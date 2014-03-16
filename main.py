@@ -16,7 +16,7 @@ def main():
     intervals = ratio_builder.calculate_intervals()
 
     fuzzifier = Fuzzifier(intervals)
-    fuzzifier.fuzzify_data()
+    fuzzifier.fuzzify_time_series(time_series)
 
 if __name__ == '__main__':
     main()
