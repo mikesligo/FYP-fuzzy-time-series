@@ -15,3 +15,7 @@ class Flrg_manager(object):
                 return
         self.__flrgs.append(Fuzzy_logical_relationship_group(flr))
 
+    def find(self, lhs):
+        for flrg in self.__flrgs:
+            if flrg.lhs == lhs:
+                return flrg

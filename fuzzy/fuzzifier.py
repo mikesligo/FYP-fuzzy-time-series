@@ -6,13 +6,14 @@ class Fuzzifier(object):
     def __init__(self, intervals):
         self.__intervals = intervals
         self.__fuzzy_set_builder = Fuzzy_set_builder()
+        self.__fuzzy_sets = None
 
     def fuzzify_time_series(self, time_series):
-        fuzzy_sets = self.__fuzzy_set_builder.calculate_fuzzy_sets(self.__intervals)
-        return [self.__fuzzify_input(fuzzy_sets, data) for data in time_series.values]
+        self.__fuzzy_sets = self.__fuzzy_set_builder.calculate_fuzzy_sets(self.__intervals)
+        return [self.fuzzify_input(data) for data in time_series.values]
 
-    def __fuzzify_input(self, fuzzy_sets, val):
-        for fuzzy_set in fuzzy_sets:
+    def fuzzify_input(self, val): # TODO: need to dynamically add fuzzy sets over original model
+        for fuzzy_set in self.__fuzzy_sets:
             if fuzzy_set.max_interval().includes(val):
                 return fuzzy_set
         print "Could not find interval for input"

@@ -1,27 +1,20 @@
 import sys
-from time_series import Time_Series
-from intervals.ratio_interval_builder import Ratio_interval_builder
-from fuzzy.fuzzifier import Fuzzifier
-from fuzzy.flrg_manager import Flrg_manager
+from forecaster import Forecaster
+from first_order_fts import First_order_fts
 
 def main():
-    if len(sys.argv) < 2:
+    if len(sys.argv) < 3:
         print ("Not enough arguments")
         return
-    csv_file = sys.argv[1]
+    csv_file_loc = sys.argv[1]
+    eval_file_loc = sys.argv[2]
 
-    time_series = Time_Series()
-    time_series.import_history(csv_file)
+    fts = First_order_fts()
+    fts.build_fts(csv_file_loc)
 
-    ratio_builder = Ratio_interval_builder(time_series)
-    intervals = ratio_builder.calculate_intervals()
+    forecaster = Forecaster()
+    forecaster.evaluate_model(fts, eval_file_loc)
 
-    fuzzifier = Fuzzifier(intervals)
-    fts = fuzzifier.fuzzify_time_series(time_series)
-    fuzzy_logical_relationships =  fuzzifier.fuzzy_logical_relationships(fts)
 
-    flrg_manager = Flrg_manager()
-    flrg_manager.import_relationships(fuzzy_logical_relationships)
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -7,3 +7,6 @@ class Interval(object):
 
     def includes(self, val):
        return True if val > self.lower_bound and val <= self.upper_bound else False
+
+    def midpoint(self):
+        return (self.lower_bound + self.upper_bound)/2
