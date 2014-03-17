@@ -2,6 +2,7 @@ import sys
 from time_series import Time_Series
 from intervals.ratio_interval_builder import Ratio_interval_builder
 from fuzzy.fuzzifier import Fuzzifier
+from fuzzy.flrg_manager import Flrg_manager
 
 def main():
     if len(sys.argv) < 2:
@@ -18,6 +19,9 @@ def main():
     fuzzifier = Fuzzifier(intervals)
     fts = fuzzifier.fuzzify_time_series(time_series)
     fuzzy_logical_relationships =  fuzzifier.fuzzy_logical_relationships(fts)
+
+    flrg_manager = Flrg_manager()
+    flrg_manager.import_relationships(fuzzy_logical_relationships)
 
 if __name__ == '__main__':
     main()

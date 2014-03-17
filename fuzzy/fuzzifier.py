@@ -4,8 +4,8 @@ from fuzzy_logical_relationship import Fuzzy_logical_relationship
 class Fuzzifier(object):
 
     def __init__(self, intervals):
-       self.__intervals = intervals
-       self.__fuzzy_set_builder = Fuzzy_set_builder()
+        self.__intervals = intervals
+        self.__fuzzy_set_builder = Fuzzy_set_builder()
 
     def fuzzify_time_series(self, time_series):
         fuzzy_sets = self.__fuzzy_set_builder.calculate_fuzzy_sets(self.__intervals)
