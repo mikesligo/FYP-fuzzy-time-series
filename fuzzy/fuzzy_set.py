@@ -3,12 +3,12 @@ from intervals.interval import Interval
 class Fuzzy_set(object):
 
     def __init__(self, name):
-        self.__set = []
+        self.set = []
         self.max = None
         self.name = name
 
     def add(self, member):
-        self.__set.append(member)
+        self.set.append(member)
         if member.is_max():
             self.max = member
 

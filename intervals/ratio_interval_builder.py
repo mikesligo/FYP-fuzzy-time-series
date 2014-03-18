@@ -22,10 +22,12 @@ class Ratio_interval_builder(object):
         lower_bound = self.__lower_bound()
         upper_bound = lower_bound * increment_multiplier
 
+        cnt=0
         while lower_bound < max(self.__time_series.values):
-            intervals.append(Interval(lower_bound, upper_bound))
+            intervals.append(Interval(lower_bound, upper_bound, "u"+str(cnt)))
             lower_bound = upper_bound
             upper_bound = upper_bound * increment_multiplier
+            cnt = cnt + 1
         return intervals
 
     def __lower_bound(self):

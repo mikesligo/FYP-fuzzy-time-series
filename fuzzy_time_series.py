@@ -31,14 +31,29 @@ class Fuzzy_time_series(object):
         if self.__fuzzifier is None:
             print "FTS not built yet"
         fuzzified = self.__fuzzifier.fuzzify_input(val)
-
         forecast = []
         for flrg_manager in self.__flrg_managers:
             matching_flrg = flrg_manager.find(fuzzified)
-            total = 0
-            for idx, flr in enumerate(matching_flrg.rhs):
-                total = total + flr.max.interval.midpoint()
-            average = total/(idx+1)
-            forecast.append(average)
-
+            forecast.append(matching_flrg)
+        intersection = self.__fuzzy_intersection(forecast)
         return np.mean(forecast)
+
+    def __fuzzy_intersection(self, flrgs):
+
+        full_dict = {}
+        half_dict = {}
+        for flrg in flrgs:
+            rhs_sets = set([rhs for rhs in flrg.rhs])
+            for fuzzy_set in rhs_sets:
+                self.__add_to_dict(full_dict, str(fuzzy_set.max))
+                for member in fuzzy_set.set:
+                    if member.membership == 0.5:
+                        self.__add_to_dict(half_dict, member)
+        x = [intersection for intersection in full_dict.keys() if full_dict[intersection] == len(flrgs)]
+        pass
+
+    def __add_to_dict(self, dict, key):
+        if key in dict.keys():
+            dict[key] = dict[key] + 1
+        else:
+            dict[key] = 1
