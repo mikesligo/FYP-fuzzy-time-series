@@ -21,6 +21,6 @@ class Fuzzifier(object):
     def fuzzy_logical_relationships(self, fts, order):
         flrs = []
         for idx, fuzzy_set in enumerate(fts):
-            if idx > order - 1:
-                flrs.append(Fuzzy_logical_relationship(fts[idx-order], fuzzy_set))
+            if idx > order:
+                flrs.append(Fuzzy_logical_relationship(fts[idx-(order+1)], fuzzy_set))
         return flrs
