@@ -10,7 +10,7 @@ class First_order_fts(object):
         self.__flrg_manager = Flrg_manager()
         self.__fuzzifier = None
 
-    def build_fts(self, csv_file):
+    def build_fts(self, order, csv_file):
         time_series = Time_Series()
         time_series.import_history(csv_file)
 
@@ -19,9 +19,10 @@ class First_order_fts(object):
 
         self.__fuzzifier = Fuzzifier(intervals)
         fts = self.__fuzzifier.fuzzify_time_series(time_series)
-        fuzzy_logical_relationships =  self.__fuzzifier.fuzzy_logical_relationships(fts)
 
-        self.__flrg_manager.import_relationships(fuzzy_logical_relationships)
+        for i in xrange(0,order):
+            fuzzy_logical_relationships =  self.__fuzzifier.fuzzy_logical_relationships(fts, i)
+            self.__flrg_manager.import_relationships(fuzzy_logical_relationships)
 
     def forecast(self, val):
         if self.__fuzzifier is None:

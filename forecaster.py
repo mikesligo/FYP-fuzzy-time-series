@@ -15,6 +15,5 @@ class Forecaster(object):
                     error_sq = error_sq + (forecast_val - tick.Close)**2
                 forecast_val = fts.forecast(tick.Close)
 
-        mse = error_sq/idx
-        rmse = sqrt(mse)
+        rmse = sqrt(error_sq/idx)
         return rmse

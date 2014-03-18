@@ -10,10 +10,11 @@ def main():
     eval_file_loc = sys.argv[2]
 
     fts = First_order_fts()
-    fts.build_fts(csv_file_loc)
+    fts.build_fts(1, csv_file_loc)
 
     forecaster = Forecaster()
-    forecaster.evaluate_model(fts, eval_file_loc)
+    rmse = forecaster.evaluate_model(fts, eval_file_loc)
+    print rmse
 
 
 if __name__ == "__main__":

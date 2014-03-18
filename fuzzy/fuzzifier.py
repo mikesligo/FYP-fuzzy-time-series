@@ -18,9 +18,9 @@ class Fuzzifier(object):
                 return fuzzy_set
         print "Could not find interval for input"
 
-    def fuzzy_logical_relationships(self, fts):
+    def fuzzy_logical_relationships(self, fts, order):
         flrs = []
         for idx, fuzzy_set in enumerate(fts):
-            if idx > 0:
-                flrs.append(Fuzzy_logical_relationship(fts[idx-1], fuzzy_set))
+            if idx > order - 1:
+                flrs.append(Fuzzy_logical_relationship(fts[idx-order], fuzzy_set))
         return flrs
