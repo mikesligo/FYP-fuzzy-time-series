@@ -1,6 +1,6 @@
 import sys
 from forecaster import Forecaster
-from first_order_fts import First_order_fts
+from fuzzy_time_series import Fuzzy_time_series
 
 def main():
     if len(sys.argv) < 3:
@@ -9,8 +9,8 @@ def main():
     csv_file_loc = sys.argv[1]
     eval_file_loc = sys.argv[2]
 
-    fts = First_order_fts()
-    fts.build_fts(1, csv_file_loc)
+    fts = Fuzzy_time_series()
+    fts.build_fts(2, csv_file_loc)
 
     forecaster = Forecaster()
     rmse = forecaster.evaluate_model(fts, eval_file_loc)
