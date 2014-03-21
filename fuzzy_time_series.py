@@ -35,25 +35,17 @@ class Fuzzy_time_series(object):
         for flrg_manager in self.__flrg_managers:
             matching_flrg = flrg_manager.find(fuzzified)
             forecast.append(matching_flrg)
-        intersection = self.__fuzzy_intersection(forecast)
-        return np.mean(forecast)
+        intersection = self.__fuzzy_intersection_intervals(forecast)
+        midpoints = [member.interval.midpoint() for member in intersection]
+        average = np.mean(midpoints)
+        return average
 
-    def __fuzzy_intersection(self, flrgs):
-
-        full_dict = {}
-        half_dict = {}
+    def __fuzzy_intersection_intervals(self, flrgs):
+        intervals_found = []
         for flrg in flrgs:
-            rhs_sets = set([rhs for rhs in flrg.rhs])
-            for fuzzy_set in rhs_sets:
-                self.__add_to_dict(full_dict, str(fuzzy_set.max))
+            for fuzzy_set in flrg.rhs:
                 for member in fuzzy_set.set:
-                    if member.membership == 0.5:
-                        self.__add_to_dict(half_dict, member)
-        x = [intersection for intersection in full_dict.keys() if full_dict[intersection] == len(flrgs)]
-        pass
+                    if member not in intervals_found and member.membership > 0:
+                        intervals_found.append(member)
+        return intervals_found
 
-    def __add_to_dict(self, dict, key):
-        if key in dict.keys():
-            dict[key] = dict[key] + 1
-        else:
-            dict[key] = 1
