@@ -11,9 +11,11 @@ class Forecaster(object):
         with open (eval_file_loc, 'r') as read_file:
             for idx, line in enumerate(read_file):
                 tick = Olhc_Tick(line)
+                #print tick.Close
                 if forecast_val is not None:
                     error_sq = error_sq + (forecast_val - tick.Close)**2
                 forecast_val = fts.forecast(tick.Close)
+                #print str(forecast_val) + "\t",
 
         rmse = sqrt(error_sq/idx)
         return rmse

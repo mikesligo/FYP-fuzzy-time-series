@@ -14,3 +14,6 @@ class Interval(object):
 
     def __str__(self):
         return self.__name
+
+    def __hash__(self):
+        return int(self.__name[1:])
