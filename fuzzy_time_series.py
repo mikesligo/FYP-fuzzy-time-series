@@ -12,6 +12,9 @@ class Fuzzy_time_series(object):
         self.__fuzzifier = None
         self.__fts = None
 
+    def order(self):
+        return len(self.__flrg_managers)
+
     def build_fts(self, order, csv_file):
         time_series = Time_Series()
         time_series.import_history(csv_file)
@@ -36,13 +39,13 @@ class Fuzzy_time_series(object):
         if self.__fuzzifier is None:
             print "FTS not built yet"
         forecast = []
-        for idx, flrg_manager in enumerate(self.__flrg_managers):
+        for idx, flrg_manager in enumerate(reversed(self.__flrg_managers)):
             fuzzified = self.__fuzzifier.fuzzify_input(mini_series[idx])
             matching_flrg = flrg_manager.find(fuzzified)
             forecast.append(matching_flrg)
         intersection = self.__fuzzy_intersection_intervals(forecast)
         if len(intersection) == 0:
-            return mini_series[len(mini_series)-1]
+            return mini_series[-1]
         midpoints = [member.interval.midpoint() for member in intersection]
         average = np.mean(midpoints)
         return average
