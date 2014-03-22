@@ -9,3 +9,6 @@ class Member(object):
 
     def __str__(self):
         return str(self.membership) + "/" +  str(self.interval)
+
+    def __hash__(self):
+        return self.interval

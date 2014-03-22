@@ -22,14 +22,15 @@ class Fuzzy_time_series(object):
         self.__fuzzifier = Fuzzifier(intervals)
         self.__fts = self.__fuzzifier.fuzzify_time_series(time_series)
 
-        for i in xrange(0,order):
+        for i in xrange(1,order+1):
             self.add_order(i)
 
     def add_order(self, order):
-        fuzzy_logical_relationships =  self.__fuzzifier.fuzzy_logical_relationships(self.__fts, order)
-        flrg_manager = Flrg_manager()
-        flrg_manager.import_relationships(fuzzy_logical_relationships)
-        self.__flrg_managers.append(flrg_manager)
+        if order not in [n.order for n in self.__flrg_managers]:
+            fuzzy_logical_relationships =  self.__fuzzifier.fuzzy_logical_relationships(self.__fts, order)
+            flrg_manager = Flrg_manager(order)
+            flrg_manager.import_relationships(fuzzy_logical_relationships)
+            self.__flrg_managers.append(flrg_manager)
 
     def forecast(self, val):
         if self.__fuzzifier is None:
@@ -54,8 +55,18 @@ class Fuzzy_time_series(object):
                 for member in fuzzy_set.set:
                     if member.membership == 1.0:
                         current_flrg_intervals_found.append(member)
-            total_intervals_found.extend(current_flrg_intervals_found)
-        total_intervals_found.sort(key=lambda x: str(x.interval))
-        return filter(lambda x: [member.interval for member in total_intervals_found].count(x.interval) >= len(flrgs), total_intervals_found)
+            total_intervals_found.append(current_flrg_intervals_found)
+        if len(total_intervals_found) == 0:
+            return []
 
-    # allow for multiple discoveries
+        found_in_all_new = []
+        found_in_all_check = total_intervals_found[0]
+        for intervals_found in total_intervals_found[1:]:
+            for member in intervals_found:
+                if member in found_in_all_check and member not in found_in_all_new:
+                    found_in_all_new.append(member)
+            found_in_all_check = found_in_all_new
+            found_in_all_new = []
+        return found_in_all_check
+        #total_intervals_found.sort(key=lambda x: str(x.interval))
+        #return filter(lambda x: [member.interval for member in total_intervals_found].count(x.interval) >= len(flrgs), total_intervals_found)
