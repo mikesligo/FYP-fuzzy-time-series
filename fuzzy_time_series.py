@@ -32,17 +32,17 @@ class Fuzzy_time_series(object):
             flrg_manager.import_relationships(fuzzy_logical_relationships)
             self.__flrg_managers.append(flrg_manager)
 
-    def forecast(self, val):
+    def forecast(self, mini_series):
         if self.__fuzzifier is None:
             print "FTS not built yet"
-        fuzzified = self.__fuzzifier.fuzzify_input(val)
         forecast = []
-        for flrg_manager in self.__flrg_managers:
+        for idx, flrg_manager in enumerate(self.__flrg_managers):
+            fuzzified = self.__fuzzifier.fuzzify_input(mini_series[idx])
             matching_flrg = flrg_manager.find(fuzzified)
             forecast.append(matching_flrg)
         intersection = self.__fuzzy_intersection_intervals(forecast)
         if len(intersection) == 0:
-            return val
+            return mini_series[len(mini_series)-1]
         midpoints = [member.interval.midpoint() for member in intersection]
         average = np.mean(midpoints)
         return average
@@ -56,9 +56,11 @@ class Fuzzy_time_series(object):
                     if member.membership == 1.0:
                         current_flrg_intervals_found.append(member)
             total_intervals_found.append(current_flrg_intervals_found)
+        return self.__intersect_fuzzy_sets(total_intervals_found)
+
+    def __intersect_fuzzy_sets(self, total_intervals_found):
         if len(total_intervals_found) == 0:
             return []
-
         found_in_all_new = []
         found_in_all_check = total_intervals_found[0]
         for intervals_found in total_intervals_found[1:]:
@@ -67,6 +69,4 @@ class Fuzzy_time_series(object):
                     found_in_all_new.append(member)
             found_in_all_check = found_in_all_new
             found_in_all_new = []
-        return found_in_all_check
-        #total_intervals_found.sort(key=lambda x: str(x.interval))
-        #return filter(lambda x: [member.interval for member in total_intervals_found].count(x.interval) >= len(flrgs), total_intervals_found)
+        return  found_in_all_check

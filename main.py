@@ -11,7 +11,6 @@ def main():
 
     fts = Fuzzy_time_series()
     fts.build_fts(1, csv_file_loc)
-    fts.add_order(1)
 
     forecaster = Forecaster()
     rmse = forecaster.evaluate_model(fts, eval_file_loc)
