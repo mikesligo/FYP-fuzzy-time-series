@@ -1,5 +1,3 @@
-import sys
-from time_series import Time_Series
 from intervals.ratio_interval_builder import Ratio_interval_builder
 from fuzzy.fuzzifier import Fuzzifier
 from fuzzy.flrg_manager import Flrg_manager
@@ -15,12 +13,10 @@ class Fuzzy_time_series(object):
     def order(self):
         return len(self.__flrg_managers)
 
-    def build_fts(self, order, csv_file):
-        time_series = Time_Series()
-        time_series.import_history(csv_file)
-
+    def build_fts(self, order, time_series):
         ratio_builder = Ratio_interval_builder(time_series)
         intervals = ratio_builder.calculate_intervals()
+        self.tick_builder = time_series.builder
 
         self.__fuzzifier = Fuzzifier(intervals)
         self.__fts = self.__fuzzifier.fuzzify_time_series(time_series)
