@@ -27,7 +27,7 @@ def main():
     fts = Fuzzy_time_series()
     fts.build_fts(0, time_series)
 
-    for idx, i in enumerate(xrange(1,11)):
+    for idx, i in enumerate(xrange(1,2)):
         fts.add_order(i)
         rmse = forecaster.evaluate_model(fts, eval_file_loc)
         print str(i) +": "+ str(rmse)
