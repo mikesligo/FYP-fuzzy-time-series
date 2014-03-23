@@ -23,4 +23,3 @@ class Flrg_manager(object):
 
     def __str__(self):
         return "Order-" + str(self.order)
-

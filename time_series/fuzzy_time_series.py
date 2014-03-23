@@ -34,19 +34,24 @@ class Fuzzy_time_series(object):
     def forecast(self, mini_series):
         if self.__fuzzifier is None:
             print "FTS not built yet"
-        forecast = []
+        forecast_flrgs = []
         for idx, flrg_manager in enumerate(reversed(self.__flrg_managers)):
             fuzzified = self.__fuzzifier.fuzzify_input(mini_series[idx])
             matching_flrg = flrg_manager.find(fuzzified)
-            forecast.append(matching_flrg)
-        intersection = self.__fuzzy_intersection_intervals(forecast)
+            if matching_flrg is not None:
+                forecast_flrgs.append(matching_flrg)
+        intersection = self.__fuzzy_intersection(forecast_flrgs)
         if len(intersection) == 0:
             return mini_series[-1]
         midpoints = [member.interval.midpoint() for member in intersection]
         average = np.mean(midpoints)
         return average
 
-    def __fuzzy_intersection_intervals(self, flrgs):
+    def __fuzzy_intersection(self, flrgs):
+        max_members = self.__get_flrgs_max_members(flrgs)
+        return self.__members_common_to_all_sets(max_members)
+
+    def __get_flrgs_max_members(self, flrgs):
         total_intervals_found = []
         for flrg in flrgs:
             current_flrg_intervals_found = []
@@ -55,9 +60,9 @@ class Fuzzy_time_series(object):
                     if member.membership == 1.0:
                         current_flrg_intervals_found.append(member)
             total_intervals_found.append(current_flrg_intervals_found)
-        return self.__intersect_fuzzy_sets(total_intervals_found)
+        return total_intervals_found
 
-    def __intersect_fuzzy_sets(self, total_intervals_found):
+    def __members_common_to_all_sets(self, total_intervals_found):
         if len(total_intervals_found) == 0:
             return []
         found_in_all_new = []
