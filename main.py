@@ -5,6 +5,7 @@ from time_series.time_series import Time_Series
 from time_series.forex_tick import Forex_Tick
 from time_series.enrollment_tick import Enrollment_tick
 from time_series.taiex_tick import Taiex_tick
+from random_walk.random_walk import Random_walk
 
 def main():
     if len(sys.argv) < 4:
@@ -22,6 +23,7 @@ def main():
     time_series = Time_Series(tick_builder)
     time_series.import_history(training_file_loc)
 
+    evaluate_random_walk(time_series, eval_file_loc)
     forecaster = Forecaster()
 
     fts = Fuzzy_time_series()
@@ -30,8 +32,14 @@ def main():
     for idx, i in enumerate(xrange(1,2)):
         fts.add_order(i)
         rmse = forecaster.evaluate_model(fts, eval_file_loc)
-        print str(i) +": "+ str(rmse)
+        print "Order-" + str(i) +": "+ str(rmse)
 
+def evaluate_random_walk(time_series, eval_file_loc):
+    forecaster = Forecaster()
+    walk = Random_walk()
+    walk.build(time_series)
+    rmse = forecaster.evaluate_model(walk, eval_file_loc)
+    print "Random walk: " + str(rmse)
 
 if __name__ == "__main__":
     main()

@@ -9,4 +9,3 @@ class Time_Series(object):
     def import_history(self, loc):
         for data in read_file(loc):
             self.values.append(self.builder(data).val())
-
