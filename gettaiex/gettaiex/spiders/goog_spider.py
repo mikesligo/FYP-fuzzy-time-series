@@ -5,8 +5,12 @@ from gettaiex.items import GettaiexItem
 class Goog_spider(Spider):
 
     name = "goog"
-    allowed_domains = ["google.com/finance/historical?q=TPE%3ATAIEX"]
-    start_urls = ["https://www.google.com/finance/historical?cid=9947405&startdate=Jan%201%2C%202000&enddate=Dec%2031%2C%202004&num=30&ei=qw0vU8DwGeaswAOrsQE&start=1260"]
+    allowed_domains = ["google.com"]
+    start_urls = []
+    num = 1260
+    while num >= 0:
+        start_urls.append("https://www.google.com/finance/historical?cid=9947405&startdate=Jan%201%2C%202000&enddate=Dec%2031%2C%202004&num=30&ei=hCkvU5jsA-WBwAO3FQ&start=" + str(num))
+        num = num - 30
 
     def parse(self, response):
         sel = Selector(response)
