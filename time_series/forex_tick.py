@@ -1,4 +1,4 @@
-class Olhc_Tick(object):
+class Forex_Tick(object):
 
     def __init__(self, line):
         split = line.split('\t')

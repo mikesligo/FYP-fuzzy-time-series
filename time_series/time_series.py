@@ -1,4 +1,4 @@
-from olhc_tick import Olhc_Tick
+from utils import read_file
 
 class Time_Series(object):
 
@@ -6,7 +6,7 @@ class Time_Series(object):
         self.values = []
         self.builder = builder
 
-    def import_history(self, csv_loc):
-        with open (csv_loc, 'r') as read_file:
-            for line in read_file:
-                self.values.append(self.builder(line).val())
+    def import_history(self, loc):
+        for data in read_file(loc):
+            self.values.append(self.builder(data).val())
+
