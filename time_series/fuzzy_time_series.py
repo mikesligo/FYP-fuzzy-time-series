@@ -2,6 +2,7 @@ from intervals.ratio_interval_builder import Ratio_interval_builder
 from fuzzy.fuzzifier import Fuzzifier
 from fuzzy.flrg_manager import Flrg_manager
 import numpy as np
+import itertools
 
 class Fuzzy_time_series(object):
 
@@ -9,17 +10,22 @@ class Fuzzy_time_series(object):
         self.__flrg_managers = []
         self.__fuzzifier = None
         self.__fts = None
+        self.__time_series = None
 
     def order(self):
         return len(self.__flrg_managers)
 
+    def moving_window_len(self):
+        return self.__time_series.moving_window_len
+
     def build_fts(self, order, time_series):
-        ratio_builder = Ratio_interval_builder(time_series)
+        self.__time_series = time_series
+        ratio_builder = Ratio_interval_builder(self.__time_series)
         intervals = ratio_builder.calculate_intervals()
-        self.tick_builder = time_series.builder
+        self.tick_builder = self.__time_series.builder
 
         self.__fuzzifier = Fuzzifier(intervals)
-        self.__fts = self.__fuzzifier.fuzzify_time_series(time_series)
+        self.__fts = self.__fuzzifier.fuzzify_time_series(self.__time_series)
 
         for i in xrange(1,order+1):
             self.add_order(i)
@@ -31,12 +37,12 @@ class Fuzzy_time_series(object):
             flrg_manager.import_relationships(fuzzy_logical_relationships)
             self.__flrg_managers.append(flrg_manager)
 
-    def forecast(self, mini_series):
+    def forecast(self, moving_window, mini_series):
         if self.__fuzzifier is None:
             print "FTS not built yet"
         forecast_flrgs = []
         for idx, flrg_manager in enumerate(reversed(self.__flrg_managers)):
-            fuzzified = self.__fuzzifier.fuzzify_input(mini_series[idx])
+            fuzzified = self.__fuzzifier.fuzzify_moving_window(moving_window)
             matching_flrg = flrg_manager.find(fuzzified)
             if matching_flrg is not None:
                 forecast_flrgs.append(matching_flrg)

@@ -23,7 +23,7 @@ class Ratio_interval_builder(object):
         upper_bound = lower_bound * increment_multiplier
 
         cnt=0
-        while lower_bound < max(self.__time_series.values):
+        while lower_bound < max(self.__time_series.heads()):
             intervals.append(Interval(lower_bound, upper_bound, "u"+str(cnt)))
             lower_bound = upper_bound
             upper_bound = upper_bound * increment_multiplier
@@ -31,7 +31,7 @@ class Ratio_interval_builder(object):
         return intervals
 
     def __lower_bound(self):
-        min_val = min(self.__time_series.values)
+        min_val = min(self.__time_series.heads())
         log = floor(log10(min_val))
         padding = (10**log)/10
         return min_val - padding
@@ -62,6 +62,6 @@ class Ratio_interval_builder(object):
         for idx, value in enumerate(self.__time_series.values):
             if idx > 0:
                 prev_value = self.__time_series.values[idx-1]
-                first_difference = abs(value - prev_value)
-                relative_difference.append(first_difference/prev_value)
+                first_difference = abs(value[-1] - prev_value[-1])
+                relative_difference.append(first_difference/prev_value[-1])
         return relative_difference

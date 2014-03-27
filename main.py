@@ -20,10 +20,11 @@ def main():
     elif tick_type == "taiex":
         tick_builder = Taiex_tick
 
-    time_series = Time_Series(tick_builder)
+    moving_window_len = 1
+    time_series = Time_Series(tick_builder, moving_window_len)
     time_series.import_history(training_file_loc)
 
-    evaluate_random_walk(time_series, eval_file_loc)
+    #evaluate_random_walk(time_series, eval_file_loc)
     forecaster = Forecaster()
 
     fts = Fuzzy_time_series()
