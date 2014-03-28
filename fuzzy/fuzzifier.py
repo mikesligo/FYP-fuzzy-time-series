@@ -1,6 +1,6 @@
 from fuzzy_set_builder import Fuzzy_set_builder
 from fuzzy_logical_relationship import Fuzzy_logical_relationship
-import itertools
+from time_series.moving_window import Moving_window
 
 class Fuzzifier(object):
 
@@ -11,12 +11,12 @@ class Fuzzifier(object):
 
     def fuzzify_time_series(self, time_series):
         self.__fuzzy_sets = self.__fuzzy_set_builder.calculate_fuzzy_sets(self.__intervals)
-        return self.fuzzify_moving_window(time_series)
+        return self.fuzzify_moving_window(time_series.values)
 
-    def fuzzify_moving_window(self, time_series):
+    def fuzzify_moving_window(self, time_series_values):
         fuzzified = []
-        for moving_window in time_series.values:
-            fuzzified.append([self.fuzzify_input(data) for data in moving_window])
+        for moving_window in time_series_values:
+            fuzzified.append(Moving_window(map(self.fuzzify_input, moving_window)))
         return fuzzified
 
     def fuzzify_input(self, val): # TODO: need to dynamically add fuzzy sets over original model

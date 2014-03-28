@@ -37,18 +37,22 @@ class Fuzzy_time_series(object):
             flrg_manager.import_relationships(fuzzy_logical_relationships)
             self.__flrg_managers.append(flrg_manager)
 
-    def forecast(self, moving_window, mini_series):
+    def forecast(self, mini_series):
         if self.__fuzzifier is None:
             print "FTS not built yet"
+        if self.moving_window_len() > 1 and self.order() > 1:
+            raise Exception("Implementation does not support a higher order rolling window fuzzy time series")
         forecast_flrgs = []
+        fuzzified_series = self.__fuzzifier.fuzzify_moving_window(mini_series)
         for idx, flrg_manager in enumerate(reversed(self.__flrg_managers)):
-            fuzzified = self.__fuzzifier.fuzzify_moving_window(moving_window)
+            fuzzified = fuzzified_series[idx]
             matching_flrg = flrg_manager.find(fuzzified)
             if matching_flrg is not None:
                 forecast_flrgs.append(matching_flrg)
-        intersection = self.__fuzzy_intersection(forecast_flrgs)
-        if len(intersection) == 0:
-            return mini_series[-1]
+        if len(forecast_flrgs) > 0:
+            intersection = self.__fuzzy_intersection(forecast_flrgs)
+            if len(intersection) == 0:
+                return mini_series[-1]
         midpoints = [member.interval.midpoint() for member in intersection]
         average = np.mean(midpoints)
         return average
@@ -79,4 +83,4 @@ class Fuzzy_time_series(object):
                     found_in_all_new.append(member)
             found_in_all_check = found_in_all_new
             found_in_all_new = []
-        return  found_in_all_check
+        return found_in_all_check

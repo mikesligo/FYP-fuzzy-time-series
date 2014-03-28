@@ -1,6 +1,6 @@
 from utils import read_file
 from collections import deque
-from copy import copy
+from moving_window import Moving_window
 
 class Time_Series(object):
 
@@ -14,7 +14,7 @@ class Time_Series(object):
         for data in read_file(loc):
             mini_series.append(self.builder(data).val())
             if len(mini_series) == self.moving_window_len:
-                self.values.append(copy(mini_series))
+                self.values.append(Moving_window(mini_series))
 
     def vals(self):
         for idx, moving_window in enumerate(self.values):

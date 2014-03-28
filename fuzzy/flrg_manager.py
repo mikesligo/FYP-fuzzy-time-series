@@ -12,7 +12,7 @@ class Flrg_manager(object):
     def __add_relationship(self, flr):
         for flrg in self.__flrgs:
             if flrg.lhs == flr.lhs:
-                flrg.rhs.append(flr.rhs)
+                flrg.rhs.append(flr.rhs.head())
                 return
         self.__flrgs.append(Fuzzy_logical_relationship_group(flr))
 

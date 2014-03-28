@@ -32,7 +32,6 @@ class Ratio_interval_builder(object):
 
     def __lower_bound(self):
         x = list(self.__time_series.vals())
-        pass
         min_val = min(list(self.__time_series.vals()))
         log = floor(log10(min_val))
         padding = (10**log)/10
