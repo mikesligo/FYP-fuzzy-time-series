@@ -20,8 +20,10 @@ class Random_walk(object):
         self.__stdev = np.std(list(self.__abs_changes(time_series)))
 
     def __abs_changes(self, time_series):
+        changes = []
         for idx, val in enumerate(time_series.values[-1000:]):
-            yield abs(float(time_series.values[idx]) - float(time_series.values[idx-1]))
+            changes.append(abs(float(time_series.values[idx]) - float(time_series.values[idx-1])))
+        return changes
 
     def order(self):
         return 1

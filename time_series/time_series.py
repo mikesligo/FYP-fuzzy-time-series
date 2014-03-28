@@ -16,10 +16,10 @@ class Time_Series(object):
             if len(mini_series) == self.moving_window_len:
                 self.values.append(copy(mini_series))
 
-    def heads(self):
-        for val in self.values:
-            yield val[-1]
-
     def vals(self):
-        for moving_window in self.values:
-            yield [val for val in moving_window]
+        for idx, moving_window in enumerate(self.values):
+            if idx == len(self.values) - 1:
+                for val in moving_window:
+                    yield val
+            else:
+                yield moving_window[0]
