@@ -40,8 +40,6 @@ class Fuzzy_time_series(object):
     def forecast(self, mini_series):
         if self.__fuzzifier is None:
             print "FTS not built yet"
-        if self.moving_window_len() > 1 and self.order() > 1:
-            raise Exception("Implementation does not support a higher order rolling window fuzzy time series")
         forecast_flrgs = []
         fuzzified_series = self.__fuzzifier.fuzzify_moving_window(mini_series)
         for idx, flrg_manager in enumerate(reversed(self.__flrg_managers)):
@@ -49,10 +47,9 @@ class Fuzzy_time_series(object):
             matching_flrg = flrg_manager.find(fuzzified)
             if matching_flrg is not None:
                 forecast_flrgs.append(matching_flrg)
-        if len(forecast_flrgs) > 0:
-            intersection = self.__fuzzy_intersection(forecast_flrgs)
-            if len(intersection) == 0:
-                return mini_series[-1]
+        intersection = self.__fuzzy_intersection(forecast_flrgs)
+        if len(intersection) == 0:
+            return mini_series[-1].head()
         midpoints = [member.interval.midpoint() for member in intersection]
         average = np.mean(midpoints)
         return average
