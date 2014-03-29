@@ -11,10 +11,14 @@ class Time_Series(object):
 
     def import_history(self, loc):
         mini_series = deque(maxlen=self.moving_window_len)
+        prev = None
         for data in read_file(loc):
-            mini_series.append(self.builder(data).val())
-            if len(mini_series) == self.moving_window_len:
-                self.values.append(Moving_window(mini_series))
+            val = self.builder(data).val()
+            if prev:
+                mini_series.append(val-prev)
+                if len(mini_series) == self.moving_window_len:
+                    self.values.append(Moving_window(mini_series))
+            prev = val
 
     def vals(self):
         for idx, moving_window in enumerate(self.values):

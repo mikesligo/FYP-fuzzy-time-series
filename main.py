@@ -21,8 +21,8 @@ def main():
     elif tick_type == "taiex":
         tick_builder = Taiex_tick
 
-    moving_window_len = 4
-    confidence_threshold = 2
+    moving_window_len = 5
+    confidence_threshold = 15
 
     time_series = Time_Series(tick_builder, moving_window_len)
     time_series.import_history(training_file_loc)
@@ -31,7 +31,7 @@ def main():
 
     fts = Fuzzy_time_series(confidence_threshold)
     fts.build_fts(0, time_series)
-    for i in xrange(1,4):
+    for i in xrange(1,2):
         fts.add_order(i)
 
         rmse = forecaster.evaluate_model(fts, eval_file_loc)
