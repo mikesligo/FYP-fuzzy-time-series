@@ -2,6 +2,7 @@ from interval import Interval
 from base_table import Base_table
 from math import log10, floor
 import numpy as np
+import itertools
 
 class Ratio_interval_builder(object):
 
@@ -61,10 +62,9 @@ class Ratio_interval_builder(object):
 
 
     def __get_relative_differences(self):
-        relative_difference = []
-        for idx, value in enumerate(self.__time_series.values):
-            if idx > 0:
-                prev_value = self.__time_series.values[idx-1]
-                first_difference = abs(value[-1] - prev_value[-1])
-                relative_difference.append(first_difference/prev_value[-1])
-        return relative_difference
+        ret = []
+        for prev, current in itertools.izip(self.__time_series.values[1:], self.__time_series.values):
+            first_difference = abs(current[-1] - prev[-1])
+            relative_difference = first_difference/prev[-1]
+            ret.append(relative_difference)
+        return ret
