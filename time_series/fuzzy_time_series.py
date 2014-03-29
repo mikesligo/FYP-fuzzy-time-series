@@ -19,18 +19,18 @@ class Fuzzy_time_series(object):
         return self.__time_series.moving_window_len
 
     def build_fts(self, order, time_series):
+        print "Building fuzzy time series..."
         self.__time_series = time_series
         ratio_builder = Ratio_interval_builder(self.__time_series)
         intervals = ratio_builder.calculate_intervals()
         self.tick_builder = self.__time_series.builder
 
         self.__fuzzifier = Fuzzifier(intervals)
-        print "pre fuzzified fts"
         self.__fts = self.__fuzzifier.fuzzify_time_series(self.__time_series)
-        print "post fuzzified fts"
 
         for i in xrange(1,order+1):
             self.add_order(i)
+        print "Fuzzy time series built"
 
     def add_order(self, order):
         if order not in [n.order for n in self.__flrg_managers]:
@@ -64,7 +64,7 @@ class Fuzzy_time_series(object):
         total_intervals_found = []
         for flrg in flrgs:
             current_flrg_intervals_found = []
-            for fuzzy_set in flrg.rhs:
+            for fuzzy_set in flrg:
                 for member in fuzzy_set.set:
                     if member.membership == 1.0:
                         current_flrg_intervals_found.append(member)

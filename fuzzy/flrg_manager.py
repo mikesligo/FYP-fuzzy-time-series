@@ -14,7 +14,7 @@ class Flrg_manager(object):
             self.__flrgs[str(flr.lhs)].append(flr.rhs.head())
         else:
             new = Fuzzy_logical_relationship_group(flr)
-            self.__flrgs[str(new)] = new
+            self.__flrgs[str(new.lhs)] = new.rhs
 
     def find(self, lhs):
         if str(lhs) in self.__flrgs.keys():
