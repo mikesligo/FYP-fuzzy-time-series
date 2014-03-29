@@ -1,5 +1,6 @@
 import numpy as np
 from random import gauss
+import itertools
 
 class Random_walk(object):
 
@@ -12,7 +13,7 @@ class Random_walk(object):
         if self.__stdev is None or self.__mean is None:
             raise Exception("Standard deviation of changes not built")
         random_change = gauss(self.__mean, self.__stdev)
-        return mini_series[-1] + random_change
+        return mini_series[-1].head() + random_change
 
     def build(self, time_series):
         self.tick_builder = time_series.builder
@@ -20,10 +21,11 @@ class Random_walk(object):
         self.__stdev = np.std(list(self.__abs_changes(time_series)))
 
     def __abs_changes(self, time_series):
-        changes = []
-        for idx, val in enumerate(time_series.values[-1000:]):
-            changes.append(abs(float(time_series.values[idx]) - float(time_series.values[idx-1])))
-        return changes
+        for prev, current in itertools.izip(time_series.values[1:], time_series.values):
+            yield abs(prev.head() - current.head())
 
     def order(self):
+        return 1
+
+    def moving_window_len(self):
         return 1

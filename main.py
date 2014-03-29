@@ -26,25 +26,25 @@ def main():
 
     time_series = Time_Series(tick_builder, moving_window_len)
     time_series.import_history(training_file_loc)
-   # evaluate_random_walk(time_series, eval_file_loc)
 
     forecaster = Forecaster()
 
     fts = Fuzzy_time_series(confidence_threshold)
     fts.build_fts(0, time_series)
-    for i in xrange(1,2):
+    for i in xrange(1,5):
         fts.add_order(i)
+
         rmse = forecaster.evaluate_model(fts, eval_file_loc)
         print "Order-" + str(i) +":\t\t"+ str(rmse)
+
         buy_and_hold = forecaster.evaluate_buy_and_hold_model(fts, eval_file_loc)
         print "Buy and hold:\t" + str(buy_and_hold)
 
-def evaluate_random_walk(time_series, eval_file_loc):
-    forecaster = Forecaster()
-    walk = Random_walk()
-    walk.build(time_series)
-    rmse = forecaster.evaluate_model(walk, eval_file_loc)
-    print "Random walk: " + str(rmse)
+        walk = Random_walk()
+        walk.build(time_series)
+        random_walk = forecaster.evaluate_model(walk, eval_file_loc)
+        print "Random walk:\t" + str(random_walk)
+        print ""
 
 if __name__ == "__main__":
     main()
