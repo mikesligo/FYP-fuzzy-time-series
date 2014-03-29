@@ -21,7 +21,7 @@ class Ratio_interval_builder(object):
         increment_multiplier = 1.0 + ratio
 
         lower_bound = self.__lower_bound()
-        increment = abs((lower_bound * increment_multiplier) - lower_bound)/20
+        increment = abs((lower_bound * increment_multiplier) - lower_bound)/10
 
         upper_bound = lower_bound + increment
 

@@ -22,7 +22,7 @@ def main():
         tick_builder = Taiex_tick
 
     moving_window_len = 5
-    confidence_threshold = 15
+    confidence_threshold = 1
 
     time_series = Time_Series(tick_builder, moving_window_len)
     time_series.import_history(training_file_loc)
