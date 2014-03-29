@@ -26,3 +26,25 @@ class Forecaster(object):
 
         rmse = sqrt(error_sq/idx)
         return rmse
+
+    def evaluate_buy_and_hold_model(self, fts, eval_file_loc):
+            forecast_val = None
+            error_sq = 0
+            builder = fts.tick_builder
+            order, moving_window_len = fts.order(), fts.moving_window_len()
+
+            moving_window = deque(maxlen=moving_window_len)
+            mini_series = deque(maxlen=(order))
+
+            for idx, line in enumerate(read_file(eval_file_loc)):
+                tick = builder(line).val()
+                if forecast_val is not None:
+                    error_sq = error_sq + (forecast_val - tick)**2
+                moving_window.append(tick)
+                if len(moving_window) == moving_window.maxlen:
+                    mini_series.append(Moving_window(moving_window))
+                if len(mini_series) == mini_series.maxlen:
+                    forecast_val = tick
+
+            rmse = sqrt(error_sq/idx)
+            return rmse

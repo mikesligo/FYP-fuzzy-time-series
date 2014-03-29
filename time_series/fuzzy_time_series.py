@@ -6,11 +6,12 @@ import itertools
 
 class Fuzzy_time_series(object):
 
-    def __init__(self):
+    def __init__(self, confidence_threshold):
         self.__flrg_managers = []
         self.__fuzzifier = None
         self.__fts = None
         self.__time_series = None
+        self.__confidence_threshold = confidence_threshold
 
     def order(self):
         return len(self.__flrg_managers)
@@ -46,7 +47,7 @@ class Fuzzy_time_series(object):
         fuzzified_series = self.__fuzzifier.fuzzify_moving_window(mini_series)
         for idx, flrg_manager in enumerate(reversed(self.__flrg_managers)):
             fuzzified = fuzzified_series[idx]
-            matching_flrg = flrg_manager.find(fuzzified)
+            matching_flrg = flrg_manager.find(fuzzified, self.__confidence_threshold)
             if matching_flrg is not None:
                 forecast_flrgs.append(matching_flrg)
         intersection = self.__fuzzy_intersection(forecast_flrgs)

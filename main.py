@@ -21,19 +21,23 @@ def main():
     elif tick_type == "taiex":
         tick_builder = Taiex_tick
 
-    moving_window_len = 1
+    moving_window_len = 3
+    confidence_threshold = 3
+
     time_series = Time_Series(tick_builder, moving_window_len)
     time_series.import_history(training_file_loc)
    # evaluate_random_walk(time_series, eval_file_loc)
 
     forecaster = Forecaster()
 
-    fts = Fuzzy_time_series()
+    fts = Fuzzy_time_series(confidence_threshold)
     fts.build_fts(0, time_series)
-    for idx, i in enumerate(xrange(1,10)):
+    for i in xrange(1,2):
         fts.add_order(i)
         rmse = forecaster.evaluate_model(fts, eval_file_loc)
-        print "Order-" + str(i) +": "+ str(rmse)
+        print "Order-" + str(i) +":\t\t"+ str(rmse)
+        buy_and_hold = forecaster.evaluate_buy_and_hold_model(fts, eval_file_loc)
+        print "Buy and hold:\t" + str(buy_and_hold)
 
 def evaluate_random_walk(time_series, eval_file_loc):
     forecaster = Forecaster()
