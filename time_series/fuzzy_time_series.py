@@ -21,11 +21,15 @@ class Fuzzy_time_series(object):
     def build_fts(self, order, time_series):
         self.__time_series = time_series
         ratio_builder = Ratio_interval_builder(self.__time_series)
-        intervals = ratio_builder.calculate_intervals()
+        print "pre intervals"
+        intervals = ratio_builder.calculate_intervals() # todo
+        print "post intervals"
         self.tick_builder = self.__time_series.builder
 
         self.__fuzzifier = Fuzzifier(intervals)
-        self.__fts = self.__fuzzifier.fuzzify_time_series(self.__time_series)
+        print "pre fuzzified fts"
+        self.__fts = self.__fuzzifier.fuzzify_time_series(self.__time_series) # todo
+        print "post fuzzified fts"
 
         for i in xrange(1,order+1):
             self.add_order(i)
