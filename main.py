@@ -20,17 +20,18 @@ def main():
     elif tick_type == "taiex":
         tick_builder = Taiex_tick
 
-    moving_window_len = 2
+    moving_window_len = 1
     time_series = Time_Series(tick_builder, moving_window_len)
     time_series.import_history(training_file_loc)
 
-    #evaluate_random_walk(time_series, eval_file_loc)
+   # evaluate_random_walk(time_series, eval_file_loc)
+
     forecaster = Forecaster()
 
     fts = Fuzzy_time_series()
     fts.build_fts(0, time_series)
 
-    for idx, i in enumerate(xrange(1,2)):
+    for idx, i in enumerate(xrange(1,6)):
         fts.add_order(i)
         rmse = forecaster.evaluate_model(fts, eval_file_loc)
         print "Order-" + str(i) +": "+ str(rmse)
