@@ -20,10 +20,16 @@ class Fuzzifier(object):
         return fuzzified
 
     def fuzzify_input(self, val): # TODO: need to dynamically add fuzzy sets over original model
-        for fuzzy_set in self.__fuzzy_sets:
-            if fuzzy_set.max_interval().includes(val):
-                return fuzzy_set
-        print "Could not find interval for input"
+        top = self.__fuzzy_sets[len(self.__fuzzy_sets)-1].max.interval.upper_bound
+        bottom = self.__fuzzy_sets[0].max.interval.lower_bound
+        division = (top-bottom)/ len(self.__fuzzy_sets)
+        for i in xrange(0, len(self.__fuzzy_sets)):
+            check_val = bottom+i*division + division/2
+            if abs(val - check_val) < division/2:
+                if self.__fuzzy_sets[i].max.interval.includes(val):
+                    return self.__fuzzy_sets[i]
+
+        raise Exception("Could not find interval for input")
 
     def fuzzy_logical_relationships(self, fts, order):
         flrs = []

@@ -10,13 +10,9 @@ class Ratio_interval_builder(object):
         self.__base_table = Base_table()
 
     def calculate_intervals(self):
-        print "a"
         relative_differences = self.__get_relative_differences()
-        print "b"
         min_difference = self.__get_min_difference(relative_differences)
-        print "c"
         ratio = self.__ratio(relative_differences, min_difference)
-        print "d"
         return self.__intervals(ratio)
 
     def __intervals(self, ratio):
@@ -26,12 +22,13 @@ class Ratio_interval_builder(object):
         lower_bound = self.__lower_bound()
         upper_bound = lower_bound * increment_multiplier
 
+        increment = (lower_bound * increment_multiplier) - lower_bound
         cnt=0
         max_val =  max(self.__time_series.vals())
-        while lower_bound < max_val: # todo
+        while lower_bound < max_val:
             intervals.append(Interval(lower_bound, upper_bound, "u"+str(cnt)))
             lower_bound = upper_bound
-            upper_bound = upper_bound * increment_multiplier
+            upper_bound = upper_bound + increment
             cnt = cnt + 1
         return intervals
 
