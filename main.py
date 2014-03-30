@@ -12,7 +12,11 @@ def main():
     if len(sys.argv) < 4:
         print ("Not enough arguments")
         return
-    training_file_loc, eval_file_loc, tick_type = sys.argv[1:]
+    training_file_loc, eval_file_loc, tick_type, analyse_changes_str = sys.argv[1:]
+    if analyse_changes_str == 'True':
+        analyse_changes = True
+    else:
+        analyse_changes = False
 
     if tick_type == "enrollment":
         tick_builder = Enrollment_tick
@@ -21,30 +25,36 @@ def main():
     elif tick_type == "taiex":
         tick_builder = Taiex_tick
 
-    moving_window_len = 5
+    moving_window_len = 1
     confidence_threshold = 1
 
     time_series = Time_Series(tick_builder, moving_window_len)
-    time_series.import_history(training_file_loc)
+    time_series.import_history(training_file_loc, analyse_changes)
 
-    forecaster = Forecaster()
+    forecaster = Forecaster(analyse_changes)
 
     fts = Fuzzy_time_series(confidence_threshold)
     fts.build_fts(0, time_series)
-    for i in xrange(1,2):
+    for i in xrange(1,20):
         fts.add_order(i)
 
-        rmse = forecaster.evaluate_model(fts, eval_file_loc)
-        print "Order-" + str(i) +":\t\t"+ str(rmse)
-
-        buy_and_hold = forecaster.evaluate_buy_and_hold_model(fts, eval_file_loc)
-        print "Buy and hold:\t" + str(buy_and_hold)
-
-        #walk = Random_walk()
-        #walk.build(time_series)
-        #random_walk = forecaster.evaluate_model(walk, eval_file_loc)
-        #print "Random walk:\t" + str(random_walk)
+        rmse, percent = forecaster.evaluate_model(fts, eval_file_loc)
+        print "Order-" + str(i)
+        print "RMSE:\t"+ str(rmse)
+        print "%:\t\t" + str(percent)
         print ""
+        b_percent, b_rmse = forecaster.evaluate_buy_and_hold_model(fts, eval_file_loc)
+        print "Buy and hold:\t"
+        print "RMSE:\t"+ str(b_rmse)
+        print "%:\t\t" + str(b_percent)
+        print ""
+        walk = Random_walk()
+        walk.build(time_series)
+        r_rmse, r_percent = forecaster.evaluate_model(walk, eval_file_loc)
+        print "Random walk:\t"
+        print "RMSE:\t"+ str(r_rmse)
+        print "%:\t\t" + str(r_percent)
+        print "-----------------------------------------"
 
 if __name__ == "__main__":
     main()

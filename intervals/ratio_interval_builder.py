@@ -18,10 +18,12 @@ class Ratio_interval_builder(object):
 
     def __intervals(self, ratio):
         intervals = []
+        if ratio > 1:
+            ratio = ratio / 20
         increment_multiplier = 1.0 + ratio
 
         lower_bound = self.__lower_bound()
-        increment = abs((lower_bound * increment_multiplier) - lower_bound)/10
+        increment = abs((lower_bound * increment_multiplier) - lower_bound)
 
         upper_bound = lower_bound + increment
 
@@ -41,7 +43,7 @@ class Ratio_interval_builder(object):
             padding = (10**log)/10
             return -furthest_val - padding
         else:
-            min_val = max(list(self.__time_series.vals()))
+            min_val = min(list(self.__time_series.vals()))
             log = floor(log10(min_val))
             padding = (10**log)/10
             return min_val - padding

@@ -19,7 +19,7 @@ class Fuzzifier(object):
             fuzzified.append(Moving_window(map(self.fuzzify_input, moving_window)))
         return fuzzified
 
-    def fuzzify_input(self, val): # TODO: need to dynamically add fuzzy sets over original model
+    def fuzzify_input(self, val):
         top = self.__fuzzy_sets[len(self.__fuzzy_sets)-1].max.interval.upper_bound
         bottom = self.__fuzzy_sets[0].max.interval.lower_bound
         division = (top-bottom)/ len(self.__fuzzy_sets)
