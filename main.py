@@ -25,7 +25,7 @@ def main():
     elif tick_type == "taiex":
         tick_builder = Taiex_tick
 
-    moving_window_len = 1
+    moving_window_len =1
     confidence_threshold = 1
 
     time_series = Time_Series(tick_builder, moving_window_len)
@@ -35,7 +35,7 @@ def main():
 
     fts = Fuzzy_time_series(confidence_threshold)
     fts.build_fts(0, time_series)
-    for i in xrange(1,20):
+    for i in xrange(1,2):
         fts.add_order(i)
 
         rmse, percent = forecaster.evaluate_model(fts, eval_file_loc)
@@ -43,6 +43,7 @@ def main():
         print "RMSE:\t"+ str(rmse)
         print "%:\t\t" + str(percent)
         print ""
+
         b_percent, b_rmse = forecaster.evaluate_buy_and_hold_model(fts, eval_file_loc)
         print "Buy and hold:\t"
         print "RMSE:\t"+ str(b_rmse)

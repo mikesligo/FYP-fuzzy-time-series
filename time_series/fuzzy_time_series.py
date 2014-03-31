@@ -52,7 +52,8 @@ class Fuzzy_time_series(object):
                 forecast_flrgs.append(matching_flrg)
         intersection = self.__fuzzy_intersection(forecast_flrgs)
         if len(intersection) == 0:
-            return mini_series[-1].head()
+            fuzzified_head = self.__fuzzifier.fuzzify_input(mini_series[-1].head())
+            return fuzzified_head.max_interval().midpoint()
         midpoints = [member.interval.midpoint() for member in intersection]
         average = np.mean(midpoints)
         return average
