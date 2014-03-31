@@ -8,3 +8,7 @@ class Result(object):
         self.prev = prev
         self.forecast = forecast_val
         self.actual = tick
+        self.title = None
+
+    def __str__(self):
+        return str(self.title)
