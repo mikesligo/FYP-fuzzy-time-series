@@ -2,7 +2,6 @@ from intervals.ratio_interval_builder import Ratio_interval_builder
 from fuzzy.fuzzifier import Fuzzifier
 from fuzzy.flrg_manager import Flrg_manager
 import numpy as np
-import itertools
 
 class Fuzzy_time_series(object):
 
@@ -40,7 +39,7 @@ class Fuzzy_time_series(object):
             flrg_manager.import_relationships(fuzzy_logical_relationships)
             self.__flrg_managers.append(flrg_manager)
 
-    def forecast(self, mini_series):
+    def forecast(self, mini_series, analyse_changes=False):
         if self.__fuzzifier is None:
             print "FTS not built yet"
         forecast_flrgs = []
@@ -52,8 +51,12 @@ class Fuzzy_time_series(object):
                 forecast_flrgs.append(matching_flrg)
         intersection = self.__fuzzy_intersection(forecast_flrgs)
         if len(intersection) == 0:
-            fuzzified_head = self.__fuzzifier.fuzzify_input(mini_series[-1].head())
-            return fuzzified_head.max_interval().midpoint()
+            if analyse_changes:
+                fuzzified_same = self.__fuzzifier.fuzzify_input(0)
+                return fuzzified_same.max_interval().midpoint()
+            else:
+                fuzzified_head = self.__fuzzifier.fuzzify_input(mini_series[-1].head())
+                return fuzzified_head.max_interval().midpoint()
         midpoints = [member.interval.midpoint() for member in intersection]
         average = np.mean(midpoints)
         return average

@@ -9,7 +9,7 @@ class Random_walk(object):
         self.__mean = None
         self.tick_builder = None
 
-    def forecast(self, mini_series):
+    def forecast(self, mini_series, analyse_changes=False):
         if self.__stdev is None or self.__mean is None:
             raise Exception("Standard deviation of changes not built")
         random_change = gauss(0, self.__stdev)

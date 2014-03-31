@@ -41,7 +41,7 @@ class Forecaster(object):
                 if len(moving_window) == moving_window.maxlen:
                     mini_series.append(Moving_window(moving_window))
                 if len(mini_series) == mini_series.maxlen:
-                    forecast_val = fts.forecast(mini_series)
+                    forecast_val = fts.forecast(mini_series, self.__analyse_changes)
                     if forecast_val == mini_series[-1].head():
                         forecast_val = tick
                     else:
