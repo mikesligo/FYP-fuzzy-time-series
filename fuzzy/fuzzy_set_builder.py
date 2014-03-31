@@ -8,34 +8,28 @@ class Fuzzy_set_builder(object):
             print "Not enough intervals for calculating fuzzy sets"
 
         fuzzy_sets = []
+        last_index = len(intervals) - 1
         for set_idx, set_counter in enumerate(intervals):
             current_set = Fuzzy_set("a" + str(set_idx))
-            if set_idx == 0:
-                for member_idx, interval in enumerate(intervals):
+            for member_idx, interval in enumerate(intervals):
+
+                if set_idx == 0:
                     if member_idx == 0:
                         current_set.add(Member(interval, 1))
                     elif member_idx == 1:
                         current_set.add(Member(interval, 0.5))
-                    else:
-                        current_set.add(Member(interval, 0.0))
 
-            elif set_idx == len(intervals) -1:
-                for member_idx, interval in enumerate(intervals):
-                    if member_idx == len(intervals) -1:
+                elif set_idx == last_index:
+                    if member_idx == last_index:
                         current_set.add(Member(interval, 1))
-                    elif member_idx == len(intervals) -2:
+                    elif member_idx == last_index - 1:
                         current_set.add(Member(interval, 0.5))
-                    else:
-                        current_set.add(Member(interval, 0.0))
 
-            else:
-                for member_idx, interval in enumerate(intervals):
+                else:
                     if member_idx == set_idx:
                         current_set.add(Member(interval, 1))
                     elif member_idx == set_idx -1 or member_idx == set_idx + 1:
                         current_set.add(Member(interval, 0.5))
-                    else:
-                        current_set.add(Member(interval, 0.0))
             fuzzy_sets.append(current_set)
 
         return fuzzy_sets

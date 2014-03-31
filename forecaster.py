@@ -9,15 +9,18 @@ class Forecaster(object):
         self.__analyse_changes = analyse_changes
 
     def evaluate_model(self, fts, eval_file_loc):
-        forecast_val = None
-        error_sq = 0
-        error_ratio = 0
         builder = fts.tick_builder
-        order, moving_window_len = fts.order(), fts.moving_window_len()
+        order = fts.order()
+        moving_window_len = fts.moving_window_len()
 
         moving_window = deque(maxlen=moving_window_len)
         mini_series = deque(maxlen=(order))
+
+        forecast_val = None
+        error_sq = 0
+        error_ratio = 0
         prev = None
+
         for idx, line in enumerate(read_file(eval_file_loc)):
             tick = builder(line).val()
             if not self.__analyse_changes:

@@ -35,7 +35,7 @@ def main():
 
     fts = Fuzzy_time_series(confidence_threshold)
     fts.build_fts(0, time_series)
-    for i in xrange(1,2):
+    for i in xrange(1,20):
         fts.add_order(i)
 
         rmse, percent = forecaster.evaluate_model(fts, eval_file_loc)
