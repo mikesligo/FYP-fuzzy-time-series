@@ -19,7 +19,7 @@ class Ratio_interval_builder(object):
     def __intervals(self, ratio):
         intervals = []
         if ratio > 1:
-            ratio = ratio / 15
+            ratio = ratio /30
         increment_multiplier = 1.0 + ratio
 
         lower_bound = self.__lower_bound()

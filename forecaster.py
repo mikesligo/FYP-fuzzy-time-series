@@ -2,6 +2,7 @@ from collections import deque
 from math import sqrt
 from time_series.utils import read_file
 from time_series.moving_window import Moving_window
+from results.result import Result
 
 class Forecaster(object):
 
@@ -23,10 +24,14 @@ class Forecaster(object):
 
         for idx, line in enumerate(read_file(eval_file_loc)):
             tick = builder(line).val()
+            if forecast_val:
+                error_sq = error_sq + (forecast_val - tick)**2
+                error_ratio = error_ratio + abs(forecast_val-tick)/tick
+
+                rmse = sqrt(error_sq/idx)
+                error_percent = 100 * error_ratio / idx
+                yield Result(rmse, error_percent, prev, forecast_val, tick)
             if not self.__analyse_changes:
-                if forecast_val is not None:
-                    error_sq = error_sq + (forecast_val - tick)**2
-                    error_ratio = error_ratio + abs(forecast_val-tick)/tick
                 moving_window.append(tick)
                 if len(moving_window) == moving_window.maxlen:
                     mini_series.append(Moving_window(moving_window))
@@ -34,23 +39,12 @@ class Forecaster(object):
                     forecast_val = fts.forecast(mini_series)
             elif prev:
                 difference = tick - prev
-                if forecast_val is not None:
-                    error_sq = error_sq + (forecast_val - tick)**2
-                    error_ratio = error_ratio + abs(forecast_val-tick)/tick
                 moving_window.append(difference)
                 if len(moving_window) == moving_window.maxlen:
                     mini_series.append(Moving_window(moving_window))
                 if len(mini_series) == mini_series.maxlen:
-                    forecast_val = fts.forecast(mini_series, self.__analyse_changes)
-                    if forecast_val == mini_series[-1].head():
-                        forecast_val = tick
-                    else:
-                        forecast_val = tick + forecast_val
+                    forecast_val = tick + fts.forecast(mini_series, self.__analyse_changes)
             prev = tick
-
-        rmse = sqrt(error_sq/idx)
-        error_percent = 100 * error_ratio / idx
-        return (rmse, error_percent)
 
     def evaluate_buy_and_hold_model(self, fts, eval_file_loc):
         forecast_val = None
@@ -65,9 +59,13 @@ class Forecaster(object):
         for idx, line in enumerate(read_file(eval_file_loc)):
             tick = builder(line).val()
             if prev:
-                if forecast_val is not None:
+                if forecast_val:
                     error_sq = error_sq + (forecast_val - tick)**2
                     error_ratio = error_ratio + abs(forecast_val-tick)/tick
+
+                    rmse = sqrt(error_sq/idx)
+                    error_percent = 100 * error_ratio / idx
+                    yield (rmse, error_percent, prev, forecast_val, tick)
                 moving_window.append(tick)
                 if len(moving_window) == moving_window.maxlen:
                     mini_series.append(Moving_window(moving_window))
@@ -75,6 +73,3 @@ class Forecaster(object):
                     forecast_val = tick
             prev = tick
 
-        rmse = sqrt(error_sq/idx)
-        error_percent = 100 * error_ratio / idx
-        return (error_percent, rmse)

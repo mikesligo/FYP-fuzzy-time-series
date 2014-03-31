@@ -20,7 +20,7 @@ class Flrg_manager(object):
         if str(lhs) in self.__flrgs.keys():
             rhs = self.__flrgs[str(lhs)]
             if len(rhs) >= threshold:
-                return rhs
+               return rhs
             else:
                 return None
         return None
