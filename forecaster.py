@@ -9,7 +9,7 @@ class Forecaster(object):
     def __init__(self, analyse_changes):
         self.__analyse_changes = analyse_changes
 
-    def evaluate_model(self, fts, eval_file_loc):
+    def evaluate_model(self, fts, eval_file_loc, order=None):
         builder = fts.tick_builder
         order = fts.order()
         moving_window_len = fts.moving_window_len()
@@ -36,14 +36,14 @@ class Forecaster(object):
                 if len(moving_window) == moving_window.maxlen:
                     mini_series.append(Moving_window(moving_window))
                 if len(mini_series) == mini_series.maxlen:
-                    forecast_val = fts.forecast(mini_series)
+                    forecast_val = fts.forecast(mini_series, order=order)
             elif prev:
                 difference = tick - prev
                 moving_window.append(difference)
                 if len(moving_window) == moving_window.maxlen:
                     mini_series.append(Moving_window(moving_window))
                 if len(mini_series) == mini_series.maxlen:
-                    forecast_val = tick + fts.forecast(mini_series, self.__analyse_changes)
+                    forecast_val = tick + fts.forecast(mini_series, self.__analyse_changes, order=order)
             prev = tick
 
     def evaluate_buy_and_hold_model(self, fts, eval_file_loc):

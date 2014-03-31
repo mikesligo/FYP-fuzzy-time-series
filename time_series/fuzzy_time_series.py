@@ -39,16 +39,17 @@ class Fuzzy_time_series(object):
             flrg_manager.import_relationships(fuzzy_logical_relationships)
             self.__flrg_managers.append(flrg_manager)
 
-    def forecast(self, mini_series, analyse_changes=False):
+    def forecast(self, mini_series, order=None,analyse_changes=False):
         if self.__fuzzifier is None:
             print "FTS not built yet"
         forecast_flrgs = []
         fuzzified_series = self.__fuzzifier.fuzzify_moving_window(mini_series)
         for idx, flrg_manager in enumerate(reversed(self.__flrg_managers)):
-            fuzzified = fuzzified_series[idx]
-            matching_flrg = flrg_manager.find(fuzzified, self.__confidence_threshold)
-            if matching_flrg is not None:
-                forecast_flrgs.append(matching_flrg)
+            if idx < order:
+                fuzzified = fuzzified_series[idx]
+                matching_flrg = flrg_manager.find(fuzzified, self.__confidence_threshold)
+                if matching_flrg is not None:
+                    forecast_flrgs.append(matching_flrg)
         intersection = self.__fuzzy_intersection(forecast_flrgs)
         if len(intersection) == 0:
             if analyse_changes:

@@ -16,23 +16,20 @@ class Results(object):
         normal = self.__eval_normal()
 
     def __eval_normal(self):
-        eurusd = self.__eval("EURUSD","data/EURUSD_day.csv", "data/eval.csv", Forex_Tick, False, 1)
-        taiex = self.__eval("TAIEX","data/taiex/taiex.json", "data/taiex/eval_taiex.json", Taiex_tick, False, 1)
+        #eurusd = self.__eval("EURUSD","data/EURUSD_day.csv", "data/eval.csv", Forex_Tick, False, 1)
+        #taiex = self.__eval("TAIEX","data/taiex/taiex.json", "data/taiex/eval_taiex.json", Taiex_tick, False, 1)
         enrollment = self.__eval("ENROLLMENT","data/enrollment/alabama.csv", "data/enrollment/alabama.csv", Enrollment_tick, False, 1)
-        all = itertools.izip_longest(eurusd, taiex, enrollment, fillvalue=None)
-        f = open("test.csv", "w")
-        f.write('\t'.join(self.__forecast(all)))
-        f.close()
+        tabbed = '\t'.join(self.__forecast(enrollment))
+        formatted = '\n'.join([line[1:] for line in tabbed.split('\n')])
+        print formatted
 
-    def __forecast(self, all):
-        for idx, individual_results in enumerate(all):
-            for orders in individual_results:
-                if orders:
-                    for order in orders:
-                        if idx == 0:
-                            yield order.title
-                        else:
-                            yield str(order.current_error_percent)
+    def __forecast(self, data):
+        for idx, orders in enumerate(data):
+            for order in orders:
+                if idx == 0:
+                    yield order.title
+                else:
+                    yield str(order.current_error_percent)
             yield '\n'
 
     def __eval(self, name, training_file_loc, eval_file_loc, tick_builder, analyse_changes, confidence_threshold):
@@ -46,13 +43,13 @@ class Results(object):
 
             results = []
             for order in xrange(1,5):
-                fts.add_order(order)
                 results.append(self.__get_resuts(name, order, window_len, forecaster, fts, eval_file_loc))
             return itertools.izip(*results)
 
     def __get_resuts(self, name, order, window_len, forecaster, fts, eval_file_loc):
+        fts.add_order(order)
         title = name + ": moving window length: " + str(window_len) +", order: " + str(order)
-        for idx, result in enumerate(forecaster.evaluate_model(fts, eval_file_loc)):
+        for result in forecaster.evaluate_model(fts, eval_file_loc, order=order):
             result.title = title
             yield result
 
