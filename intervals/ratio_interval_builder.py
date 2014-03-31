@@ -28,7 +28,7 @@ class Ratio_interval_builder(object):
         upper_bound = lower_bound + increment
 
         cnt=0
-        max_val =  max(self.__time_series.vals())
+        max_val =  max(self.__time_series.vals()) * 2
         while lower_bound < max_val:
             intervals.append(Interval(lower_bound, upper_bound, "u"+str(cnt)))
             lower_bound = upper_bound

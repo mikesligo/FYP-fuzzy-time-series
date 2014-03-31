@@ -12,7 +12,7 @@ class Random_walk(object):
     def forecast(self, mini_series):
         if self.__stdev is None or self.__mean is None:
             raise Exception("Standard deviation of changes not built")
-        random_change = gauss(self.__mean, self.__stdev)
+        random_change = gauss(0, self.__stdev)
         return mini_series[-1].head() + random_change
 
     def build(self, time_series):

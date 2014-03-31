@@ -1,7 +1,6 @@
 from utils import read_file
 from collections import deque
 from moving_window import Moving_window
-import itertools
 
 class Time_Series(object):
 
