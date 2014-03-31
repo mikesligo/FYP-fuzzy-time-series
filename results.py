@@ -19,7 +19,7 @@ class Results(object):
     def __eval_normal(self):
         eurusd = self.__eval_eurusd()
         for x in eurusd:
-            print x
+            print '\t'.join(x)
         pass
 
     def __eval_eurusd(self):
@@ -29,7 +29,7 @@ class Results(object):
         analyse_changes = False
         confidence_threshold = 1
 
-        for window_len in xrange(1,6):
+        for window_len in xrange(1,2):
             time_series = Time_Series(tick_builder, window_len)
             time_series.import_history(training_file_loc, analyse_changes)
 
@@ -37,18 +37,24 @@ class Results(object):
             fts = Fuzzy_time_series(confidence_threshold)
             fts.build_fts(0, time_series)
 
-            for order in xrange(1,12,2):
-                title = "EURUSD: moving window length: " + str(window_len) +", order: " + str(order) + ", "
+            all_results = []
+            for order in xrange(1,5):
                 fts.add_order(order)
-                for idx, result in enumerate(itertools.islice(forecaster.evaluate_model(fts, eval_file_loc),100, 110)):
-                    if idx == 0:
-                        yield title + "% error\trmse\tprev\tforecast\tactual"
-                    else:
-                        yield str(result.current_error_percent) +"\t" + \
-                            str(result.current_rmse) + "\t" + \
-                            str(result.prev) + "\t" + \
-                            str(result.forecast) + "\t" + \
-                            str(result.actual)
+                all_results.append(self.__get_resuts(order, window_len, forecaster, fts, eval_file_loc))
+            return itertools.izip(*all_results)
+
+    def __get_resuts(self, order, window_len, forecaster, fts, eval_file_loc):
+        title = "EURUSD: moving window length: " + str(window_len) +", order: " + str(order) + ", "
+        for idx, result in enumerate(forecaster.evaluate_model(fts, eval_file_loc)):
+            if idx == 0:
+                yield title + "% error\t"+title+"Rmse\t"+title+"Prev\t"+title+"Forecast\t"+title+"Actual"
+            else:
+                yield str(result.current_error_percent) +"\t" + \
+                      str(result.current_rmse) + "\t" + \
+                      str(result.prev) + "\t" + \
+                      str(result.forecast) + "\t" + \
+                      str(result.actual)
+
 
 if __name__ == "__main__":
     results = Results()
