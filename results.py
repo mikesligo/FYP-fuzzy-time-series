@@ -10,20 +10,20 @@ import itertools
 class Results(object):
 
     def __init__(self):
-        self.moving_window_max = 4
-        self.order_max = 4
+        self.moving_window_max = 2
+        self.order_max = 2
 
     def get_results(self):
-        #eurusd = self.__eval("EURUSD","data/EURUSD_day.csv", "data/eval.csv", Forex_Tick, False, 1)
+        eurusd = self.__eval("EURUSD","data/EURUSD_day.csv", "data/eval.csv", Forex_Tick, False, 1)
         #taiex = self.__eval("TAIEX","data/taiex/taiex.json", "data/taiex/eval_taiex.json", Taiex_tick, False, 1)
         #enrollment = self.__eval("ENROLLMENT","data/enrollment/alabama.csv", "data/enrollment/alabama.csv", Enrollment_tick, False, 1)
 
-        #eurusd_changes = self.__eval("EURUSD","data/EURUSD_day.csv", "data/eval.csv", Forex_Tick, False, 1)
-        taiex_changes = self.__eval("TAIEX","data/taiex/taiex.json", "data/taiex/eval_taiex.json", Taiex_tick, False, 1)
-        #enrollment_changes = self.__eval("ENROLLMENT","data/enrollment/alabama.csv", "data/enrollment/alabama.csv", Enrollment_tick, False, 1)
+        #eurusd_changes = self.__eval("EURUSD Changes","data/EURUSD_day.csv", "data/eval.csv", Forex_Tick, False, 1)
+        #taiex_changes = self.__eval("TAIEX Changes","data/taiex/taiex.json", "data/taiex/eval_taiex.json", Taiex_tick, False, 1)
+        #enrollment_changes = self.__eval("ENROLLMENT Changes","data/enrollment/alabama.csv", "data/enrollment/alabama.csv", Enrollment_tick, False, 1)
 
-        analyse = taiex_changes
-        actual = self.__result(analyse, "percent")
+        analyse = eurusd
+        actual = self.__result(analyse, "rmse")
         formatted = self.__formatted(actual)
         print formatted
 

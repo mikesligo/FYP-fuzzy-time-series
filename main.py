@@ -38,23 +38,22 @@ def main():
     for i in xrange(1,2):
         fts.add_order(i)
 
-        rmse, percent = forecaster.evaluate_model(fts, eval_file_loc)
+        result = list(forecaster.evaluate_model(fts, eval_file_loc, order=i))[-1]
         print "Order-" + str(i)
-        print "RMSE:\t"+ str(rmse)
-        print "%:\t\t" + str(percent)
+        print "RMSE:\t"+ str(result.rmse)
+        print "%:\t\t" + str(result.percent)
         print ""
-
-        b_percent, b_rmse = forecaster.evaluate_buy_and_hold_model(fts, eval_file_loc)
+        result = list(forecaster.evaluate_buy_and_hold_model(fts, eval_file_loc, order=i))[-1]
         print "Buy and hold:\t"
-        print "RMSE:\t"+ str(b_rmse)
-        print "%:\t\t" + str(b_percent)
+        print "RMSE:\t"+ str(result.rmse)
+        print "%:\t\t" + str(result.percent)
         print ""
         walk = Random_walk()
         walk.build(time_series)
-        r_rmse, r_percent = forecaster.evaluate_model(walk, eval_file_loc)
+        result = list(forecaster.evaluate_model(walk, eval_file_loc, order=i))[-1]
         print "Random walk:\t"
-        print "RMSE:\t"+ str(r_rmse)
-        print "%:\t\t" + str(r_percent)
+        print "RMSE:\t"+ str(result.rmse)
+        print "%:\t\t" + str(result.percent)
         print "-----------------------------------------"
 
 if __name__ == "__main__":

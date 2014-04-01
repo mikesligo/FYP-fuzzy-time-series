@@ -25,6 +25,13 @@ class Forecaster(object):
 
         for idx, line in enumerate(read_file(eval_file_loc)):
             tick = builder(line).val()
+            forecast_val = fuzzy_forecast if fuzzy_forecast is not None else tick
+
+            error_sq = error_sq + (forecast_val - tick)**2
+            error_ratio = error_ratio + abs(forecast_val-tick)/tick
+            rmse = sqrt(error_sq/(idx+1))
+            error_percent = 100 * error_ratio / (idx+1)
+
             if not self.__analyse_changes:
                 moving_window.append(tick)
                 if len(moving_window) == moving_window.maxlen:
@@ -37,21 +44,13 @@ class Forecaster(object):
                 if len(moving_window) == moving_window.maxlen:
                     mini_series.append(Moving_window(moving_window))
                 if len(mini_series) == mini_series.maxlen:
-                    fuzzy_forecast = tick + fts.forecast(mini_series, self.__analyse_changes, order=order)
-            if fuzzy_forecast:
-                forecast_val = fuzzy_forecast
-            else:
-                forecast_val = tick
-            error_sq = error_sq + (forecast_val - tick)**2
-            error_ratio = error_ratio + abs(forecast_val-tick)/tick
-
-            rmse = sqrt(error_sq/(idx+1))
-            error_percent = 100 * error_ratio / (idx+1)
+                    fuzzy_forecast = tick + fts.forecast(mini_series, order=order, analyse_changes=self.__analyse_changes)
             yield Result(rmse, error_percent, prev, forecast_val, tick)
             prev = tick
 
-    def evaluate_buy_and_hold_model(self, fts, eval_file_loc):
+    def evaluate_buy_and_hold_model(self, fts, eval_file_loc, order=None):
         fuzzy_forecast = None
+        forecast_val = None
         error_sq = 0
         error_ratio = 0
         builder = fts.tick_builder
@@ -63,20 +62,16 @@ class Forecaster(object):
         for idx, line in enumerate(read_file(eval_file_loc)):
             tick = builder(line).val()
             if prev:
+                if forecast_val:
+                    error_sq = error_sq + (forecast_val - tick)**2
+                    error_ratio = error_ratio + abs(forecast_val-tick)/tick
+
+                    rmse = sqrt(error_sq/(idx+1))
+                    error_percent = 100 * error_ratio / (idx+1)
+                    yield Result(rmse, error_percent, prev, forecast_val, tick)
                 moving_window.append(tick)
                 if len(moving_window) == moving_window.maxlen:
                     mini_series.append(Moving_window(moving_window))
-                if len(mini_series) == mini_series.maxlen:
-                    fuzzy_forecast = tick
-                if fuzzy_forecast:
-                    forecast_val = fuzzy_forecast
-                else:
-                    forecast_val = tick
-                error_sq = error_sq + (forecast_val - tick)**2
-                error_ratio = error_ratio + abs(forecast_val-tick)/tick
-
-                rmse = sqrt(error_sq/(idx+1))
-                error_percent = 100 * error_ratio / (idx+1)
-                yield Result(rmse, error_percent, prev, forecast_val, tick)
+                forecast_val = tick
             prev = tick
 
