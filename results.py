@@ -19,17 +19,21 @@ class Results(object):
         #eurusd = self.__eval("EURUSD","data/EURUSD_day.csv", "data/eval.csv", Forex_Tick, False, 1)
         #taiex = self.__eval("TAIEX","data/taiex/taiex.json", "data/taiex/eval_taiex.json", Taiex_tick, False, 1)
         enrollment = self.__eval("ENROLLMENT","data/enrollment/alabama.csv", "data/enrollment/alabama.csv", Enrollment_tick, False, 1)
-        tabbed = '\t'.join(self.__forecast(enrollment))
-        formatted = '\n'.join([line[1:] for line in tabbed.split('\n')])
+        tabbed = '\t'.join(self.__result(enrollment, "forecast"))
+        formatted = self.__remove_first_tab(tabbed)
         print formatted
 
-    def __forecast(self, data):
+    def __remove_first_tab(self, tabbed):
+        return '\n'.join([line[1:] if line[0:1] == '\t' else line for line in tabbed.split('\n')])
+
+    def __result(self, data, attr):
         for idx, orders in enumerate(data):
             for order in orders:
-                if idx == 0:
-                    yield order.title
-                else:
-                    yield str(order.current_error_percent)
+                if order:
+                    if idx == 0:
+                        yield order.title
+                    else:
+                        yield str(getattr(order, attr))
             yield '\n'
 
     def __eval(self, name, training_file_loc, eval_file_loc, tick_builder, analyse_changes, confidence_threshold):
@@ -42,9 +46,9 @@ class Results(object):
             fts.build_fts(0, time_series)
 
             results = []
-            for order in xrange(1,5):
+            for order in xrange(1,7):
                 results.append(self.__get_resuts(name, order, window_len, forecaster, fts, eval_file_loc))
-            return itertools.izip(*results)
+            return itertools.izip_longest(*results, fillvalue=None)
 
     def __get_resuts(self, name, order, window_len, forecaster, fts, eval_file_loc):
         fts.add_order(order)
