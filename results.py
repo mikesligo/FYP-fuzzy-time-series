@@ -10,20 +10,25 @@ import itertools
 class Results(object):
 
     def __init__(self):
-        pass
+        self.moving_window_max = 4
+        self.order_max = 4
 
     def get_results(self):
-        normal = self.__eval_normal()
-
-    def __eval_normal(self):
         #eurusd = self.__eval("EURUSD","data/EURUSD_day.csv", "data/eval.csv", Forex_Tick, False, 1)
         #taiex = self.__eval("TAIEX","data/taiex/taiex.json", "data/taiex/eval_taiex.json", Taiex_tick, False, 1)
-        enrollment = self.__eval("ENROLLMENT","data/enrollment/alabama.csv", "data/enrollment/alabama.csv", Enrollment_tick, False, 1)
-        tabbed = '\t'.join(self.__result(enrollment, "forecast"))
-        formatted = self.__remove_first_tab(tabbed)
+        #enrollment = self.__eval("ENROLLMENT","data/enrollment/alabama.csv", "data/enrollment/alabama.csv", Enrollment_tick, False, 1)
+
+        #eurusd_changes = self.__eval("EURUSD","data/EURUSD_day.csv", "data/eval.csv", Forex_Tick, False, 1)
+        taiex_changes = self.__eval("TAIEX","data/taiex/taiex.json", "data/taiex/eval_taiex.json", Taiex_tick, False, 1)
+        #enrollment_changes = self.__eval("ENROLLMENT","data/enrollment/alabama.csv", "data/enrollment/alabama.csv", Enrollment_tick, False, 1)
+
+        analyse = taiex_changes
+        actual = self.__result(analyse, "percent")
+        formatted = self.__formatted(actual)
         print formatted
 
-    def __remove_first_tab(self, tabbed):
+    def __formatted(self, data):
+        tabbed = '\t'.join(data)
         return '\n'.join([line[1:] if line[0:1] == '\t' else line for line in tabbed.split('\n')])
 
     def __result(self, data, attr):
@@ -37,7 +42,8 @@ class Results(object):
             yield '\n'
 
     def __eval(self, name, training_file_loc, eval_file_loc, tick_builder, analyse_changes, confidence_threshold):
-        for window_len in xrange(1,5):
+        results = []
+        for window_len in xrange(1,self.order_max):
             time_series = Time_Series(tick_builder, window_len)
             time_series.import_history(training_file_loc, analyse_changes)
 
@@ -45,10 +51,9 @@ class Results(object):
             fts = Fuzzy_time_series(confidence_threshold)
             fts.build_fts(0, time_series)
 
-            results = []
-            for order in xrange(1,7):
+            for order in xrange(1,self.moving_window_max):
                 results.append(self.__get_resuts(name, order, window_len, forecaster, fts, eval_file_loc))
-            return itertools.izip_longest(*results, fillvalue=None)
+        return itertools.izip_longest(*results, fillvalue=None)
 
     def __get_resuts(self, name, order, window_len, forecaster, fts, eval_file_loc):
         fts.add_order(order)
