@@ -82,9 +82,9 @@ class Fuzzy_time_series(object):
             return []
         found_in_all_new = []
         found_in_all_check = total_intervals_found[0]
-        for intervals_found in total_intervals_found:
+        for intervals_found in total_intervals_found[1:]:
             for member in intervals_found:
-                if member in found_in_all_check and member not in found_in_all_new:
+                if member in found_in_all_check:
                     found_in_all_new.append(member)
             found_in_all_check = found_in_all_new
             found_in_all_new = []
