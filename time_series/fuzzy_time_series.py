@@ -66,13 +66,13 @@ class Fuzzy_time_series(object):
         max_members = self.__get_flrgs_max_members(flrgs)
         return self.__members_common_to_all_sets(max_members)
 
-    def __get_flrgs_max_members(self, flrgs):
+    def __get_flrgs_max_members(self, flrgs, alpha=0.5):
         total_intervals_found = []
         for flrg in flrgs:
             current_flrg_intervals_found = []
             for fuzzy_set in flrg:
                 for member in fuzzy_set.set:
-                    if member.membership == 1.0:
+                    if member.membership >= alpha:
                         current_flrg_intervals_found.append(member)
             total_intervals_found.append(current_flrg_intervals_found)
         return total_intervals_found
@@ -82,7 +82,7 @@ class Fuzzy_time_series(object):
             return []
         found_in_all_new = []
         found_in_all_check = total_intervals_found[0]
-        for intervals_found in total_intervals_found[1:]:
+        for intervals_found in total_intervals_found:
             for member in intervals_found:
                 if member in found_in_all_check and member not in found_in_all_new:
                     found_in_all_new.append(member)

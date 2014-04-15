@@ -74,4 +74,3 @@ class Forecaster(object):
                     mini_series.append(Moving_window(moving_window))
                 forecast_val = tick
             prev = tick
-

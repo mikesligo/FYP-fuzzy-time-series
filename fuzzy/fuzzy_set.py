@@ -1,5 +1,3 @@
-from intervals.interval import Interval
-
 class Fuzzy_set(object):
 
     def __init__(self, name):

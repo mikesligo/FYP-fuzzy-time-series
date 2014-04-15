@@ -7,6 +7,7 @@ from time_series.enrollment_tick import Enrollment_tick
 from time_series.taiex_tick import Taiex_tick
 from random_walk.random_walk import Random_walk
 
+
 def main():
     print "starting"
     if len(sys.argv) < 4:
@@ -34,27 +35,28 @@ def main():
     forecaster = Forecaster(analyse_changes)
 
     fts = Fuzzy_time_series(confidence_threshold)
-    fts.build_fts(0, time_series)
-    for i in xrange(1,2):
+    fts.build_fts(1, time_series)
+    for i in xrange(1, 4):
         fts.add_order(i)
 
         result = list(forecaster.evaluate_model(fts, eval_file_loc, order=i))[-1]
         print "Order-" + str(i)
-        print "RMSE:\t"+ str(result.rmse)
+        print "RMSE:\t" + str(result.rmse)
         print "%:\t\t" + str(result.percent)
         print ""
         result = list(forecaster.evaluate_buy_and_hold_model(fts, eval_file_loc, order=i))[-1]
         print "Buy and hold:\t"
-        print "RMSE:\t"+ str(result.rmse)
+        print "RMSE:\t" + str(result.rmse)
         print "%:\t\t" + str(result.percent)
         print ""
         walk = Random_walk()
         walk.build(time_series)
         result = list(forecaster.evaluate_model(walk, eval_file_loc, order=i))[-1]
         print "Random walk:\t"
-        print "RMSE:\t"+ str(result.rmse)
+        print "RMSE:\t" + str(result.rmse)
         print "%:\t\t" + str(result.percent)
         print "-----------------------------------------"
+
 
 if __name__ == "__main__":
     main()
